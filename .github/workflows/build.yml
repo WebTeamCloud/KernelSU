@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y abootimg curl unzip git python3 build-essential
+          sudo apt-get install -y abootimg curl unzip git python3
 
       - name: Check boot.img exists
         run: |
@@ -23,11 +23,9 @@ jobs:
             exit 1
           fi
 
-      - name: Build mkboot tool (Linux)
+      - name: Ensure mkboot is executable
         run: |
-          cd mkbootimg_tools
-          make
-          chmod +x mkboot
+          chmod +x mkbootimg_tools/mkboot
 
       - name: Unpack boot.img using mkboot
         run: |
