@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Install dependencies
@@ -15,31 +15,29 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y abootimg curl unzip git python3
 
-      - name: Clone KernelSU and unpack tools
+      - name: Check input/boot.img exists
         run: |
-          curl -L https://codeload.github.com/tiann/KernelSU/tar.gz/refs/heads/main | tar -xz
-          mv KernelSU-main KernelSU
-          curl -L https://codeload.github.com/osm0sis/mkbootimg_tools/tar.gz/refs/heads/master | tar -xz
-          mv mkbootimg_tools-master tools
+          if [ ! -f input/boot.img ]; then
+            echo "::error ::input/boot.img not found!"
+            exit 1
+          fi
 
       - name: Unpack boot.img
         run: |
-          cd mkbootimg_tools-dir
+          cd mkbootimg_tools
           bash unpackimg.sh ../input/boot.img
-          cd ..
 
       - name: Inject KernelSU
         run: |
-          KernelSU/tools/inject.sh mkbootimg_tools-dir
+          KernelSU/tools/inject.sh mkbootimg_tools
 
       - name: Repack boot_kernelsu.img
         run: |
-          cd mkbootimg_tools-dir
+          cd mkbootimg_tools
           bash repackimg.sh
           mv image-new.img ../boot_kernelsu.img
-          cd ..
 
-      - name: Upload boot_kernelsu.img
+      - name: Upload patched boot_kernelsu.img
         uses: actions/upload-artifact@v4
         with:
           name: boot_kernelsu
