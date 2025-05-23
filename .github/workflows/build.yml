@@ -2,11 +2,6 @@ name: Inject KernelSU
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'input/boot.img'
 
 jobs:
   build:
@@ -45,7 +40,7 @@ jobs:
           cd ..
 
       - name: Upload boot_kernelsu.img
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: boot_kernelsu
           path: boot_kernelsu.img
