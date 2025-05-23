@@ -17,10 +17,10 @@ jobs:
 
       - name: Clone KernelSU and unpack tools
         run: |
-          git config --global credential.helper ""
-          git clone --depth=1 https://github.com/tiann/KernelSU
-          git clone --depth=1 https://github.com/osm0sis/mkbootimg_tools.git
-          mv mkbootimg_tools mkbootimg_tools-dir
+          curl -L https://github.com/tiann/KernelSU/archive/refs/heads/main.tar.gz | tar xz
+          mv KernelSU-main KernelSU
+          curl -L https://github.com/osm0sis/mkbootimg_tools/archive/refs/heads/master.tar.gz | tar xz
+          mv mkbootimg_tools-master tools
 
       - name: Unpack boot.img
         run: |
