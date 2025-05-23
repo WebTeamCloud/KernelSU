@@ -23,9 +23,11 @@ jobs:
             exit 1
           fi
 
-      - name: Make mkboot executable
+      - name: Build mkboot tool (Linux)
         run: |
-          chmod +x mkbootimg_tools/mkboot
+          cd mkbootimg_tools
+          make
+          chmod +x mkboot
 
       - name: Unpack boot.img using mkboot
         run: |
@@ -36,7 +38,7 @@ jobs:
         run: |
           KernelSU/tools/inject.sh out
 
-      - name: Repack boot_kernelsu.img using mkboot
+      - name: Repack boot_kernelsu.img
         run: |
           ./mkbootimg_tools/mkboot out boot_kernelsu.img
 
