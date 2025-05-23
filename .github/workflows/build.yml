@@ -1,0 +1,50 @@
+name: Inject KernelSU
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'input/boot.img'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y abootimg curl unzip git python3
+
+      - name: Download tools
+        run: |
+          git clone --depth=1 https://github.com/tiann/KernelSU
+          curl -LO https://github.com/osm0sis/mkbootimg_tools/archive/refs/heads/master.zip
+          unzip master.zip
+          mv mkbootimg_tools-master mkbootimg_tools
+
+      - name: Unpack boot.img
+        run: |
+          cd mkbootimg_tools
+          bash unpackimg.sh ../input/boot.img
+          cd ..
+
+      - name: Inject KernelSU
+        run: |
+          KernelSU/tools/inject.sh mkbootimg_tools
+
+      - name: Repack new boot.img
+        run: |
+          cd mkbootimg_tools
+          bash repackimg.sh
+          mv image-new.img ../boot_kernelsu.img
+          cd ..
+
+      - name: Upload boot_kernelsu.img
+        uses: actions/upload-artifact@v3
+        with:
+          name: boot_kernelsu
+          path: boot_kernelsu.img
