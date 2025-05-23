@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -13,29 +14,31 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y abootimg curl unzip git python3
+          sudo apt-get install -y abootimg curl unzip git python3 build-essential
 
-      - name: Check input/boot.img exists
+      - name: Check boot.img exists
         run: |
           if [ ! -f input/boot.img ]; then
             echo "::error ::input/boot.img not found!"
             exit 1
           fi
 
-      - name: Unpack boot.img
+      - name: Make mkboot executable
         run: |
-          cd mkbootimg_tools
-          bash unpackimg.sh ../input/boot.img
+          chmod +x mkbootimg_tools/mkboot
+
+      - name: Unpack boot.img using mkboot
+        run: |
+          mkdir out
+          ./mkbootimg_tools/mkboot input/boot.img out
 
       - name: Inject KernelSU
         run: |
-          KernelSU/tools/inject.sh mkbootimg_tools
+          KernelSU/tools/inject.sh out
 
-      - name: Repack boot_kernelsu.img
+      - name: Repack boot_kernelsu.img using mkboot
         run: |
-          cd mkbootimg_tools
-          bash repackimg.sh
-          mv image-new.img ../boot_kernelsu.img
+          ./mkbootimg_tools/mkboot out boot_kernelsu.img
 
       - name: Upload patched boot_kernelsu.img
         uses: actions/upload-artifact@v4
