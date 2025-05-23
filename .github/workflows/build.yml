@@ -17,9 +17,9 @@ jobs:
 
       - name: Clone KernelSU and unpack tools
         run: |
-          curl -L https://github.com/tiann/KernelSU/archive/refs/heads/main.tar.gz | tar xz
+          curl -L https://codeload.github.com/tiann/KernelSU/tar.gz/refs/heads/main | tar -xz
           mv KernelSU-main KernelSU
-          curl -L https://github.com/osm0sis/mkbootimg_tools/archive/refs/heads/master.tar.gz | tar xz
+          curl -L https://codeload.github.com/osm0sis/mkbootimg_tools/tar.gz/refs/heads/master | tar -xz
           mv mkbootimg_tools-master tools
 
       - name: Unpack boot.img
