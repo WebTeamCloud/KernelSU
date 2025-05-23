@@ -1,6 +1,7 @@
 name: Inject KernelSU
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
